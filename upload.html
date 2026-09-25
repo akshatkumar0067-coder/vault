@@ -1,0 +1,574 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Vault - Distributed Storage</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            min-height: 100vh;
+            background: #0f172a;
+            color: white;
+            padding: 30px;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: auto;
+        }
+
+        /* HEADER */
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 35px;
+        }
+
+        .logo {
+            font-size: 28px;
+            font-weight: bold;
+            color: #38bdf8;
+        }
+
+        .subtitle {
+            color: #94a3b8;
+            font-size: 14px;
+        }
+
+        /* HERO */
+
+        .hero {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .hero h1 {
+            font-size: 40px;
+            margin-bottom: 10px;
+        }
+
+        .hero p {
+            color: #94a3b8;
+        }
+
+        /* UPLOAD CARD */
+
+        .upload-card {
+            background: #1e293b;
+            border: 1px solid #334155;
+            border-radius: 18px;
+            padding: 35px;
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        .upload-icon {
+            font-size: 50px;
+            margin-bottom: 15px;
+        }
+
+        .upload-card h2 {
+            margin-bottom: 10px;
+        }
+
+        .upload-card p {
+            color: #94a3b8;
+            margin-bottom: 25px;
+        }
+
+        input[type="file"] {
+            display: none;
+        }
+
+        .choose-btn {
+            display: inline-block;
+            padding: 12px 20px;
+            background: #334155;
+            border-radius: 10px;
+            cursor: pointer;
+            margin-right: 10px;
+        }
+
+        .upload-btn {
+            padding: 12px 22px;
+            border: none;
+            border-radius: 10px;
+            background: #0ea5e9;
+            color: white;
+            font-size: 15px;
+            cursor: pointer;
+        }
+
+        .upload-btn:hover {
+            background: #0284c7;
+        }
+
+        #fileName {
+            margin-top: 15px;
+            color: #38bdf8;
+        }
+
+        #message {
+            margin-top: 15px;
+            font-weight: bold;
+        }
+
+        /* NODES */
+
+        .section-title {
+            margin-bottom: 15px;
+            font-size: 22px;
+        }
+
+        .nodes {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .node {
+            background: #1e293b;
+            border: 1px solid #334155;
+            border-radius: 14px;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .node-status {
+            color: #22c55e;
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+
+        .node p {
+            color: #94a3b8;
+            font-size: 14px;
+        }
+
+        /* FILES */
+
+        .files-card {
+            background: #1e293b;
+            border: 1px solid #334155;
+            border-radius: 18px;
+            padding: 25px;
+        }
+
+        .file {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            margin-top: 12px;
+            background: #0f172a;
+            border-radius: 10px;
+        }
+
+        .file-name {
+            color: #e2e8f0;
+        }
+
+        .download-btn {
+            background: #22c55e;
+            color: white;
+            border: none;
+            padding: 9px 15px;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+
+        .download-btn:hover {
+            background: #16a34a;
+        }
+
+        .empty {
+            color: #94a3b8;
+            margin-top: 15px;
+        }
+
+        /* FOOTER */
+
+        footer {
+            text-align: center;
+            color: #64748b;
+            margin-top: 35px;
+            font-size: 13px;
+        }
+
+        @media (max-width: 700px) {
+
+            body {
+                padding: 15px;
+            }
+
+            .nodes {
+                grid-template-columns: 1fr;
+            }
+
+            .hero h1 {
+                font-size: 30px;
+            }
+
+            .file {
+                flex-direction: column;
+                gap: 12px;
+                align-items: flex-start;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+
+        <!-- HEADER -->
+
+        <header>
+            <div class="logo">🛡️ Vault</div>
+
+            <div class="subtitle">
+                Distributed Storage System
+            </div>
+        </header>
+
+
+        <!-- HERO -->
+
+        <div class="hero">
+
+            <h1>Secure File Storage</h1>
+
+            <p>
+                Upload your files and store them across multiple storage nodes.
+            </p>
+
+        </div>
+
+
+        <!-- UPLOAD -->
+
+        <div class="upload-card">
+
+            <div class="upload-icon">
+                📤
+            </div>
+
+            <h2>Upload a File</h2>
+
+            <p>
+                Your file will be distributed across the Vault storage nodes.
+            </p>
+
+            <input
+                type="file"
+                id="fileInput"
+            >
+
+            <label
+                for="fileInput"
+                class="choose-btn"
+            >
+                Choose File
+            </label>
+
+            <button
+                class="upload-btn"
+                onclick="uploadFile()"
+            >
+                Upload
+            </button>
+
+            <div id="fileName">
+                No file selected
+            </div>
+
+            <div id="message"></div>
+
+        </div>
+
+
+        <!-- STORAGE NODES -->
+
+        <h2 class="section-title">
+            Storage Nodes
+        </h2>
+
+        <div class="nodes">
+
+            <div class="node">
+
+                <div class="node-status">
+                    🟢 Node 1
+                </div>
+
+                <p>
+                    Primary Storage
+                </p>
+
+            </div>
+
+
+            <div class="node">
+
+                <div class="node-status">
+                    🟢 Node 2
+                </div>
+
+                <p>
+                    Backup Storage
+                </p>
+
+            </div>
+
+
+            <div class="node">
+
+                <div class="node-status">
+                    🟢 Node 3
+                </div>
+
+                <p>
+                    Backup Storage
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <!-- FILES -->
+
+        <div class="files-card">
+
+            <h2>
+                📁 Available Files
+            </h2>
+
+            <div id="filesList">
+
+                <p class="empty">
+                    Loading files...
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <footer>
+            Vault • Distributed File Storage • Hackathon Project
+        </footer>
+
+    </div>
+
+
+    <script>
+
+        const fileInput = document.getElementById("fileInput");
+
+        const fileName = document.getElementById("fileName");
+
+        const message = document.getElementById("message");
+
+        const filesList = document.getElementById("filesList");
+
+
+        // Show selected file name
+
+        fileInput.addEventListener("change", function () {
+
+            if (fileInput.files.length > 0) {
+
+                fileName.innerText =
+                    "Selected: " + fileInput.files[0].name;
+
+            } else {
+
+                fileName.innerText =
+                    "No file selected";
+
+            }
+
+        });
+
+
+        // Upload file
+
+        async function uploadFile() {
+
+            if (!fileInput.files.length) {
+
+                message.innerText =
+                    "Please choose a file first.";
+
+                message.style.color = "#f87171";
+
+                return;
+            }
+
+
+            const formData = new FormData();
+
+            formData.append(
+                "file",
+                fileInput.files[0]
+            );
+
+
+            message.innerText =
+                "Uploading...";
+
+            message.style.color =
+                "#38bdf8";
+
+
+            try {
+
+                const response = await fetch(
+                    "http://localhost:3000/upload",
+                    {
+                        method: "POST",
+                        body: formData
+                    }
+                );
+
+
+                const data =
+                    await response.json();
+
+
+                if (response.ok) {
+
+                    message.innerText =
+                        "✅ " + data.message;
+
+                    message.style.color =
+                        "#22c55e";
+
+                    loadFiles();
+
+                } else {
+
+                    message.innerText =
+                        "❌ " + data.error;
+
+                    message.style.color =
+                        "#f87171";
+
+                }
+
+            } catch (error) {
+
+                console.error(error);
+
+                message.innerText =
+                    "❌ Server connection failed.";
+
+                message.style.color =
+                    "#f87171";
+
+            }
+
+        }
+
+
+        // Load files
+
+        async function loadFiles() {
+
+            try {
+
+                const response = await fetch(
+                    "http://localhost:3000/files"
+                );
+
+
+                const data =
+                    await response.json();
+
+
+                filesList.innerHTML = "";
+
+
+                if (!data.files.length) {
+
+                    filesList.innerHTML =
+                        '<p class="empty">No files available.</p>';
+
+                    return;
+                }
+
+
+                data.files.forEach(function (file) {
+
+                    const fileDiv =
+                        document.createElement("div");
+
+                    fileDiv.className =
+                        "file";
+
+
+                    fileDiv.innerHTML = `
+
+                        <div class="file-name">
+                            📄 ${file}
+                        </div>
+
+                        <button
+                            class="download-btn"
+                            onclick="downloadFile('${encodeURIComponent(file)}')"
+                        >
+                            Download
+                        </button>
+
+                    `;
+
+
+                    filesList.appendChild(fileDiv);
+
+                });
+
+
+            } catch (error) {
+
+                filesList.innerHTML =
+                    '<p class="empty">Could not load files.</p>';
+
+            }
+
+        }
+
+
+        // Download file
+
+        function downloadFile(file) {
+
+            window.location.href =
+                "http://localhost:3000/download/" + file;
+
+        }
+
+
+        // Load files when page opens
+
+        loadFiles();
+
+    </script>
+
+</body>
+
+</html>
